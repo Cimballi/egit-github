@@ -35,6 +35,8 @@ public class RepositoryCommit implements Serializable {
 
 	private String url;
 
+    private String htmlUrl;
+
 	private User author;
 
 	private User committer;
@@ -134,6 +136,22 @@ public class RepositoryCommit implements Serializable {
 		this.url = url;
 		return this;
 	}
+
+    /**
+     * @return htmlUrl
+     */
+    public String getHtmlUrl() {
+        return htmlUrl;
+    }
+
+    /**
+     * @param htmlUrl
+     * @return this commit
+     */
+    public RepositoryCommit setHtmlUrl(String htmlUrl) {
+        this.htmlUrl = htmlUrl;
+        return this;
+    }
 
 	/**
 	 * @return author

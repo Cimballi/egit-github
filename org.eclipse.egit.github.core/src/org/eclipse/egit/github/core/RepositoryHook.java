@@ -12,6 +12,7 @@ package org.eclipse.egit.github.core;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.egit.github.core.util.DateUtils;
@@ -37,6 +38,8 @@ public class RepositoryHook implements Serializable {
 	private String name;
 
 	private String url;
+
+    private List<String> events;
 
 	private Map<String, String> config;
 
@@ -151,6 +154,21 @@ public class RepositoryHook implements Serializable {
 		this.url = url;
 		return this;
 	}
+
+    /**
+     * @return events
+     */
+    public List<String> getEvents() {
+        return events;
+    }
+
+    /**
+     * @param events
+     */
+    public RepositoryHook setEvents(List<String> events) {
+        this.events = events;
+        return this;
+    }
 
 	/**
 	 * @return config

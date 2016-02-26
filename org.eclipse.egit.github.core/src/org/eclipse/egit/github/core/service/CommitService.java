@@ -71,6 +71,19 @@ public class CommitService extends GitHubService {
 		return getCommits(repository, null, null);
 	}
 
+    /**
+     * Get a list of {@link RepositoryCommit} objects that match the specified filter data
+     *
+     * @param repository
+     * @param filterData
+     * @return list of commits
+     * @throws IOException
+     */
+    public List<RepositoryCommit> getCommits(IRepositoryIdProvider repository,
+            Map<String, String> filterData) throws IOException {
+        return getAll(pageCommits(repository, filterData));
+    }
+
 	/**
 	 * Get all commits in given repository beginning at an optional commit SHA-1
 	 * and affecting an optional path.
@@ -96,6 +109,50 @@ public class CommitService extends GitHubService {
 			IRepositoryIdProvider repository) {
 		return pageCommits(repository, null, null);
 	}
+
+    /**
+     * Get page iterator over commits query
+     *
+     * @param repository
+     * @param filterData
+     * @return iterator
+     */
+    public PageIterator<RepositoryCommit> pageCommits(IRepositoryIdProvider repository,
+            Map<String, String> filterData) {
+        return pageCommits(repository, filterData, PAGE_SIZE);
+    }
+
+    /**
+     * Get page iterator over commits query
+     *
+     * @param repository
+     * @param filterData
+     * @param size
+     * @return iterator
+     */
+    public PageIterator<RepositoryCommit> pageCommits(IRepositoryIdProvider repository,
+            Map<String, String> filterData, int size) {
+        return pageCommits(repository, filterData, PAGE_FIRST, size);
+    }
+
+    /**
+     * Get page iterator over commits query
+     *
+     * @param repository
+     * @param filterData
+     * @param size
+     *            page size
+     * @param start
+     *            starting page number
+     * @return iterator
+     */
+    public PageIterator<RepositoryCommit> pageCommits(IRepositoryIdProvider repository,
+            Map<String, String> filterData, int start, int size) {
+        String repoId = getId(repository);
+        PagedRequest<RepositoryCommit> request = createCommitsRequest(repoId, filterData,
+                start, size);
+        return createPageIterator(request);
+    }
 
 	/**
 	 * Page commits in given repository
@@ -484,4 +541,25 @@ public class CommitService extends GitHubService {
 		}.getType());
 		return createPageIterator(request);
 	}
+
+    /**
+     * Get bulk commits request
+     *
+     * @param repoId
+     * @param filterData
+     * @param start
+     * @param size
+     * @return paged request
+     */
+    protected PagedRequest<RepositoryCommit> createCommitsRequest(String repoId,
+            Map<String, String> filterData, int start, int size) {
+        StringBuilder uri = new StringBuilder(SEGMENT_REPOS);
+        uri.append('/').append(repoId);
+        uri.append(SEGMENT_COMMITS);
+        PagedRequest<RepositoryCommit> request = createPagedRequest(start, size);
+        request.setParams(filterData).setUri(uri);
+        request.setType(new TypeToken<List<RepositoryCommit>>() {
+        }.getType());
+        return request;
+    }
 }
